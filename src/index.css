@@ -253,6 +253,7 @@ input, button {
 .post-caption {
   font-family: 'Noto Sans', sans-serif;
   margin: 10px 0 15px;
+  font-weight: 400;
 }
 
 .post-image {

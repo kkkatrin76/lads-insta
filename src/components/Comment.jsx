@@ -16,21 +16,41 @@ function getCurrentProfile() {
   };
 }
 
+function getUserLabel(userId, profile) {
+  return userId === "me" ? profile.name : getDisplayName(userId, userId || "Unknown");
+}
+
+function renderCommentLine(comment, profile) {
+  const displayName = getUserLabel(comment.user, profile);
+
+  if (comment.replyTo) {
+    const replyToName = getUserLabel(comment.replyTo, profile);
+
+    return (
+      <div>
+        <span className="username">{displayName}</span> replied to <span className="username">{replyToName}</span>: <span>{comment.text}</span>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <span className="username">{displayName}</span>: <span>{comment.text}</span>
+    </div>
+  );
+}
+
 export function CommentList({ comments, visibleComments = [], selectedChoices = {}, onChoose }) {
   return visibleComments
     .filter((commentId) => Boolean(comments?.[commentId]))
     .map((commentId) => {
       const comment = comments[commentId];
       const profile = getCurrentProfile();
-      const isCurrentUser = comment.user === "me";
-      const displayName = isCurrentUser ? profile.name : getDisplayName(comment.user, comment.user || "Unknown");
       // const displayImage = isCurrentUser ? profile.image : `/icons/${comment.user}.png`;
 
       return (
         <div key={commentId}>
-          <div>
-            <span className="username">{displayName}</span>: <span>{comment.text}</span>
-          </div>
+          {renderCommentLine(comment, profile)}
 
           {!selectedChoices[commentId] &&
             comment.choices?.map((choice) => (
@@ -70,8 +90,6 @@ export default function Comment({
 
   const comment = comments[commentId];
   const profile = getCurrentProfile();
-  const isCurrentUser = comment.user === "me";
-  const displayName = isCurrentUser ? profile.name : getDisplayName(comment.user, comment.user || "Unknown");
   // const displayImage = isCurrentUser ? profile.image : null;
 
   return (
@@ -83,11 +101,7 @@ export default function Comment({
         marginTop: 12,
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <p className="username">{displayName}</p>
-      </div>
-
-      <div>{comment.text}</div>
+      {renderCommentLine(comment, profile)}
 
       {!selectedChoices[commentId] &&
         comment.choices?.map((choice) => (

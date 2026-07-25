@@ -14,197 +14,135 @@ export const posts = {
       c1: {
         id: "c1",
         user: "caleb",
-        text: "💪🏻💪🏻💪🏻",
-
-        children: [],
-
-        choices: [],
+        text: "💪🏻💪🏻💪🏻"
       },
       c2: {
         id: "c2",
         user: "me",
-        text: "bench me next",
-
-        children: [],
-
-        choices: [],
+        text: "bench me next"
       },
       c3: {
         id: "c3",
         user: "valko",
-        text: "Come to the gym then pup",
-
-        children: [],
-
-        choices: [],
+        text: "Come to the gym then pup"
       },
       c4: {
         id: "c4",
         user: "me",
-        text: "holy shit",
-
-        children: [],
-
-        choices: [],
+        text: "holy shit"
       },
       c5: {
         id: "c5",
         user: "valko",
-        text: "Try not to drool baby",
-
-        children: [],
-
-        choices: [],
+        text: "Try to not drool baby"
       },
       c6: {
         id: "c6",
         user: "me",
-        text: "don't tease me!!!!",
-
-        children: [],
-
-        choices: [],
+        text: "don't tease me!!!!"
       },
       c7: {
         id: "c7",
         user: "valko",
-        text: "I'm not teasing, come to the gym and let me bench you :3",
-
-        children: [],
-
-        choices: [],
+        text: "I'm not teasing, come to the gym and let me bench ya :3"
       },
       c8: {
         id: "c8",
         user: "me",
-        text: "i'm comming rn where r u?",
-
-        children: [],
-
-        choices: [],
+        text: "i'm comming rn where r u?"
       },
     },
 
     dialogue: {
       reply1: {
-        choices: [
-          {
-            id: "reply1choice1",
-            text: "bench me next",
+        choices: [{
+          id: "reply1choice1",
+          text: "bench me next",
 
-            events: [
-              {
-                type: "SHOW_COMMENT",
-                comment: "c2"
-              },
-              {
-                type: "SHOW_COMMENT",
-                comment: "c3"
-              },
+          events: [{
+            type: "SHOW_COMMENT",
+            comment: "c2"
+          }, {
+            type: "SHOW_COMMENT",
+            comment: "c3"
+          }, {
+            type: "SET_STEP",
+            step: "reply2"
+          }]
+        }, {
+          id: "reply1choice2",
+          text: "holy shit",
 
-              {
-                type: "SET_STEP",
-                step: "reply2"
-              }
-            ]
-          },
-
-          {
-            id: "reply1choice2",
-            text: "holy shit",
-
-            events: [
-              {
-                type: "SHOW_COMMENT",
-                comment: "c4"
-              },
-
-              {
-                type: "SHOW_COMMENT",
-                comment: "c5"
-              },
-
-              {
-                type: "SET_STEP",
-                step: "end"
-              }
-            ]
-          }
-        ]
+          events: [{
+            type: "SHOW_COMMENT",
+            comment: "c4"
+          }, {
+            type: "SHOW_COMMENT",
+            comment: "c5"
+          }, {
+            type: "SET_STEP",
+            step: "end"
+          }]
+        }]
       },
 
       reply2: {
-        choices: [
-          {
-            id: "reply2choice1",
-            text: "don't tease me!!!!",
+        choices: [{
+          id: "reply2choice1",
+          text: "don't tease me!!!!",
 
-            events: [
-              {
-                type: "SHOW_COMMENT",
-                comment: "c6"
+          events: [
+            {
+              type: "SHOW_COMMENT",
+              comment: "c6"
+            },
+            {
+              type: "SHOW_COMMENT",
+              comment: "c7"
+            },
+            {
+              type: "SET_STEP",
+              step: "end"
+            }
+          ]
+        },
+
+        {
+          id: "reply2choice2",
+          text: "coming over. where are you?",
+
+          events: [{
+            type: "SHOW_COMMENT",
+            comment: "c8"
+          }, {
+            type: "ADD_POST",
+            post: {
+              id: "post1-reply2choice2-1",
+              user: "valko",
+              caption: ">:3",
+              image: "v02.jpeg",
+              initialState: {
+                visibleComments: ["c1"],
+                currentStep: ""
               },
-              {
-                type: "SHOW_COMMENT",
-                comment: "c7"
-              },
-              {
-                type: "SET_STEP",
-                step: "end"
+
+              comments: {
+                c1: {
+                  id: "c1",
+                  user: "me",
+                  text: "🙈"
+                },
               }
-            ]
-          },
-
-          {
-            id: "reply2choice2",
-            text: "coming over. where are you?",
-
-            events: [
-              {
-                type: "SHOW_COMMENT",
-                comment: "c8"
-              },
-              {
-                type: "ADD_POST",
-                post: {
-                  id: "post1-reply2choice2-1",
-                  user: "valko",
-                  caption: ">:3",
-                  image: "v02.jpeg",
-                  initialState: {
-                    visibleComments: ["c1"],
-                    currentStep: ""
-                  },
-
-                  comments: {
-                    c1: {
-                      id: "c1",
-                      user: "me",
-                      text: "🙈",
-
-                      children: [],
-
-                      choices: [],
-                    },
-                  }
-                }
-              },
-              {
-                type: "SHOW_NOTIFICATION",
-                text: "New post added to the main feed!"
-              },
-              {
-                type: "SET_STEP",
-                step: "end"
-              }
-            ]
+            }
+          }, {
+            type: "SHOW_NOTIFICATION",
+            text: "New post added to the main feed!"
+          }, {
+            type: "SET_STEP",
+            step: "end"
           }
-        ]
-      },
-
-      end: {
-        choices: []
-      }
+        ]}
+      ]}
     }
   },
 
@@ -213,21 +151,11 @@ export const posts = {
     user: "me",
     caption: "where do i find LADS assets bro i can't find them anywhere. where r the miners at",
     initialState: {
-      visibleComments: ["c1"],
-      currentStep: "reply1"
+      visibleComments: [],
+      currentStep: ""
     },
     
-    comments: {
-      c1: {
-        id: "c1",
-        user: "valko",
-        text: "They r hiding.....",
-
-        children: [],
-
-        choices: [],
-      },
-    },
+    comments: {},
 
     dialogue: {}
   },
@@ -245,24 +173,45 @@ export const posts = {
       c1: {
         id: "c1",
         user: "valko",
-        text: "Buddy...............",
-
-        children: [],
-
-        choices: [],
+        text: "Buddy..............."
       },
       c2: {
         id: "c2",
         user: "sylus",
-        text: "[This comment was deleted by the moderator]",
-
-        children: [],
-
-        choices: [],
+        text: "[This comment was deleted by the moderator]"
       },
+      c3: {
+        id: "c3",
+        user: "me",
+        text: "everyone, this is what i must live with orz"
+      },
+      c4: {
+        id: "c4",
+        user: "zayne",
+        replyTo: "me",
+        text: "For some reason, I feel insulted."
+      }
     },
 
-    dialogue: {}
+    dialogue: {
+      reply1: {
+        choices: [{
+          id: "reply1choice1",
+          text: "this is what i must live with orz",
+
+          events: [{
+            type: "SHOW_COMMENT",
+            comment: "c3"
+          }, {
+            type: "SHOW_COMMENT",
+            comment: "c4"
+          }, {
+            type: "SET_STEP",
+            step: "end"
+          }]
+        }]
+      }
+    }
   },
 
   post4: {
@@ -273,8 +222,6 @@ export const posts = {
       visibleComments: [],
       currentStep: "reply1"
     },
-
-    choices: [],
     
     comments: {},
 
