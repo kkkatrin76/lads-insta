@@ -17,6 +17,27 @@ function getReplyDelayMs(post, event) {
   return DEFAULT_REPLY_DELAY_MS;
 }
 
+function shouldSkipLegacyChoiceEchoEvent(event, choice, post) {
+  if (event?.type !== "SHOW_COMMENT") {
+    return false;
+  }
+
+  const commentId = event?.comment;
+  if (typeof commentId !== "string") {
+    return false;
+  }
+
+  const referencedComment = post?.comments?.[commentId];
+  if (!referencedComment || referencedComment.user !== "me") {
+    return false;
+  }
+
+  const choiceText = String(choice?.text ?? "").trim();
+  const referencedText = String(referencedComment.text ?? "").trim();
+
+  return Boolean(choiceText) && choiceText === referencedText;
+}
+
 export default function useDialogue(post, scene) {
   const [state, setState] = useState(() => ({
     ...(post.initialState ?? {}),
@@ -39,13 +60,11 @@ export default function useDialogue(post, scene) {
 
       setState((prev) => processEvents(prev, [], customComment));
 
-      choiceEvents.forEach((event, index) => {
-        const shouldSkipFirstShowComment = index === 0 && event.type === "SHOW_COMMENT";
+      const remainingEvents = choiceEvents.filter(
+        (event) => !shouldSkipLegacyChoiceEchoEvent(event, choice, post)
+      );
 
-        if (shouldSkipFirstShowComment) {
-          return;
-        }
-
+      remainingEvents.forEach((event, index) => {
         const replyDelayMs = getReplyDelayMs(post, event);
 
         window.setTimeout(() => {
@@ -102,11 +121,14 @@ export default function useDialogue(post, scene) {
   }, [scene, state.addedPosts]);
 
   const currentChoices =
-    (post?.dialogue ?? {})[state.currentStep]?.choices ?? [];
+    ((post?.dialogue ?? {})[state.currentStep]?.choices ?? []).map((choice, index) => ({
+      ...choice,
+      id: choice?.id ?? `${state.currentStep || "step"}-choice-${index}`,
+    }));
 
   return {
     state,
     choose,
-    currentChoices
+    currentChoices,
   };
 }

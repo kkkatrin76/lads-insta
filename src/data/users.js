@@ -7,4 +7,8 @@ export const usrids = {
   sylus: "Sylus",
   caleb: "Caleb",
   valko: "Valko",
+  luke: "Luke",
+  kieran: "Kieran",
+  greyson: "Greyson",
+  tara: "Tara",
 }

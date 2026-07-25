@@ -1,6 +1,7 @@
 // Display one comment recursively.
 
 import { getDisplayName } from "../engine/userDisplay";
+import { applyNameTemplate } from "../utils/templateText";
 
 function getCurrentProfile() {
   if (typeof window === "undefined") {
@@ -22,20 +23,21 @@ function getUserLabel(userId, profile) {
 
 function renderCommentLine(comment, profile) {
   const displayName = getUserLabel(comment.user, profile);
+  const commentText = applyNameTemplate(comment.text, profile.name);
 
   if (comment.replyTo) {
     const replyToName = getUserLabel(comment.replyTo, profile);
 
     return (
       <div>
-        <span className="username">{displayName}</span> replied to <span className="username">{replyToName}</span>: <span>{comment.text}</span>
+        <span className="username">{displayName}</span> replied to <span className="username">{replyToName}</span>: <span>{commentText}</span>
       </div>
     );
   }
 
   return (
     <div>
-      <span className="username">{displayName}</span>: <span>{comment.text}</span>
+      <span className="username">{displayName}</span>: <span>{commentText}</span>
     </div>
   );
 }
@@ -53,9 +55,9 @@ export function CommentList({ comments, visibleComments = [], selectedChoices = 
           {renderCommentLine(comment, profile)}
 
           {!selectedChoices[commentId] &&
-            comment.choices?.map((choice) => (
+            comment.choices?.map((choice, index) => (
               <button
-                key={choice.id}
+                key={choice.id ?? `${commentId}-choice-${index}`}
                 onClick={() => onChoose?.(commentId, choice)}
               >
                 {choice.text}
@@ -104,9 +106,9 @@ export default function Comment({
       {renderCommentLine(comment, profile)}
 
       {!selectedChoices[commentId] &&
-        comment.choices?.map((choice) => (
+        comment.choices?.map((choice, index) => (
           <button
-            key={choice.id}
+            key={choice.id ?? `${commentId}-choice-${index}`}
             onClick={() => onChoose(commentId, choice)}
           >
             {choice.text}

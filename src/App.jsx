@@ -68,7 +68,7 @@ function NotificationHost() {
 
       <HashRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/r/scene1" replace />} />
+          <Route path="/" element={<Navigate to="/r/testflight" replace />} />
           <Route path="/r/:scene" element={<ScenePage />} />
           <Route path="/post/:postId" element={<PostPage />} />
           <Route path="/settings" element={<SettingPage />} />

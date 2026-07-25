@@ -8,6 +8,13 @@ import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutl
 
 const postModules = import.meta.glob("../data/posts/*.js");
 
+function normalizePost(post, fallbackId) {
+  return {
+    ...post,
+    id: post?.id ?? fallbackId,
+  };
+}
+
 export default function PostPage() {
   const { postId } = useParams();
   const navigate = useNavigate();
@@ -46,7 +53,9 @@ export default function PostPage() {
 
       if (sceneName) {
         const addedScenePosts = Array.isArray(savedGameState?.scenePosts?.[sceneName])
-          ? savedGameState.scenePosts[sceneName]
+          ? savedGameState.scenePosts[sceneName].map((candidate, index) =>
+              normalizePost(candidate, `saved-${index}`)
+            )
           : [];
         const existingAddedPost = addedScenePosts.find((candidate) => candidate.id === postId);
 
@@ -58,9 +67,10 @@ export default function PostPage() {
 
       for (const moduleLoader of Object.values(postModules)) {
         const module = await moduleLoader();
-        const match = Object.values(module.posts ?? {}).find(
-          (candidate) => candidate.id === postId,
+        const normalizedPosts = Object.entries(module.posts ?? {}).map(([postKey, candidate]) =>
+          normalizePost(candidate, postKey)
         );
+        const match = normalizedPosts.find((candidate) => candidate.id === postId);
 
         if (match) {
           if (isMounted) {

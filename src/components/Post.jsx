@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import useDialogue from "../hooks/useDialogue";
 import { getDisplayImage, getDisplayName } from "../engine/userDisplay";
+import { applyNameTemplate } from "../utils/templateText";
 import ChoiceBar from "./ChoiceBar";
 import { CommentList } from "./Comment";
 
@@ -27,6 +28,7 @@ export default function Post({ post, scene }) {
 
   const displayUserName = post.user === "me" ? profileName : getDisplayName(post.user, post.user);
   const displayUserImage = post.user === "me" ? profileImage : getDisplayImage(post.user);
+  const displayCaption = applyNameTemplate(post.caption, profileName);
   const mergedComments = {
     ...(post.comments ?? {}),
     ...Object.fromEntries((state.customComments ?? []).map((comment) => [comment.id, comment])),
@@ -71,7 +73,7 @@ export default function Post({ post, scene }) {
         {/* Right side: post content & comments */}
         <div className="post-right">
           <div className="post-header">{displayUserName}</div>
-          <p className="post-caption">{post.caption}</p>
+          <p className="post-caption">{displayCaption}</p>
           {post.image && <img className="post-image" src={`./posts/${post.image}`} alt="Post" />}
 
           <div className="post-comments">

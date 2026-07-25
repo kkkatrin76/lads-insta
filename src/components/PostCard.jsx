@@ -6,6 +6,7 @@ import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutline
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { getDisplayImage, getDisplayName } from "../engine/userDisplay";
+import { applyNameTemplate } from "../utils/templateText";
 
 export default function PostCard({ post, scene, profileName, profileImage, onLikeChange }) {
   const currentProfileName = profileName || "You";
@@ -39,6 +40,7 @@ export default function PostCard({ post, scene, profileName, profileImage, onLik
 
   const displayName = post.user === "me" ? currentProfileName : getDisplayName(post.user, post.user);
   const displayImage = post.user === "me" ? currentProfileImage : getDisplayImage(post.user);
+  const displayCaption = applyNameTemplate(post.caption, currentProfileName);
 
   return (
     <div style={{ display: "flex", flexDirection: "row", alignItems: "start", gap: 12, borderBottom: "solid 1px #bebebe" }}>
@@ -54,7 +56,7 @@ export default function PostCard({ post, scene, profileName, profileImage, onLik
       {/* Right side: post content & action buttons */}
       <div className="post-right">
         <div className="post-header">{displayName}</div>
-        <p className="post-caption">{post.caption}</p>
+        <p className="post-caption">{displayCaption}</p>
         {post.image && <img className="post-image" src={`./posts/${post.image}`} alt="Post" />}
         <div className="post-footer">
           <Link

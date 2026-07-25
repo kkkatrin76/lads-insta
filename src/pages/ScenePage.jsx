@@ -5,14 +5,25 @@ import { usrids } from "../data/users";
 import { initialState } from "../engine/GameState";
 import PostCard from "../components/PostCard";
 
+import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 
 const sceneModules = import.meta.glob("../data/posts/*.js");
 
+function normalizePost(post, fallbackId) {
+  return {
+    ...post,
+    id: post?.id ?? fallbackId,
+  };
+}
+
 function mergeScenePosts(basePosts, savedScenePosts) {
   const savedPosts = Array.isArray(savedScenePosts) ? savedScenePosts : [];
-  const savedById = new Map(savedPosts.map((post) => [post.id, post]));
+  const normalizedSavedPosts = savedPosts.map((post, index) =>
+    normalizePost(post, `saved-${index}`)
+  );
+  const savedById = new Map(normalizedSavedPosts.map((post) => [post.id, post]));
 
   const mergedBasePosts = basePosts.map((post) => {
     const savedPost = savedById.get(post.id);
@@ -20,7 +31,7 @@ function mergeScenePosts(basePosts, savedScenePosts) {
     return savedPost ? { ...post, ...savedPost } : post;
   });
 
-  const extraSavedPosts = savedPosts.filter(
+  const extraSavedPosts = normalizedSavedPosts.filter(
     (savedPost) => !basePosts.some((basePost) => basePost.id === savedPost.id),
   );
 
@@ -91,7 +102,9 @@ export default function ScenePage() {
       }
 
       const sceneModule = await moduleLoader();
-      const basePosts = Object.values(sceneModule.posts ?? {});
+      const basePosts = Object.entries(sceneModule.posts ?? {}).map(([postKey, post]) =>
+        normalizePost(post, postKey)
+      );
       const savedScenePosts = Array.isArray(gameState.scenePosts?.[scene])
         ? gameState.scenePosts[scene]
         : [];
@@ -246,6 +259,24 @@ export default function ScenePage() {
     audio.play().catch(() => {});
   };
 
+  const handleHardReset = () => {
+    playToolbarSound("/sfx/lad_select.mp3");
+
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const shouldReset = window.confirm("⚠️ WARNING: This will clear your browser's local storage, username settings, and posts. Are you sure you want to do this?");
+
+    if (!shouldReset) {
+      return;
+    }
+
+    refreshScene();
+    window.localStorage.clear();
+    window.location.reload();
+  };
+
   const handleRefreshScene = () => {
     playToolbarSound("/sfx/lad_select.mp3");
 
@@ -259,6 +290,10 @@ export default function ScenePage() {
       return;
     }
 
+    refreshScene();
+  };
+
+  const refreshScene = () => {
     const savedGameState = window.localStorage.getItem("game-state");
 
     if (!savedGameState) {
@@ -289,15 +324,21 @@ export default function ScenePage() {
         <div className="top">
           <div className="scene-toolbar">
             {/* Refresh button to reset the scene posts to the original state */}
+            <button type="button" className="scene-toolbar-button" onClick={handleHardReset} >
+              <DeleteSweepIcon />
+            </button>
+            {/* Refresh button to reset the scene posts to the original state */}
             <button type="button" className="scene-toolbar-button" onClick={handleRefreshScene} >
               <RefreshOutlinedIcon />
             </button>
+            {/* Setting button to set account names */}
             <button type="button" className="scene-toolbar-button" onClick={() => {
               playToolbarSound("/sfx/lad_select.mp3");
               navigate("/settings");
             }} >
               <ManageAccountsOutlinedIcon />
             </button>
+            
           </div>
 
           {/* Profile image & name */}

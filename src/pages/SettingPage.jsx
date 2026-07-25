@@ -46,7 +46,10 @@ export default function SettingPage() {
   const [statusMessage, setStatusMessage] = useState("");
   const [statusColor, setStatusColor] = useState("");
 
-  const userEntries = Object.entries(usrids).filter(([userId]) => userId !== "me");
+  const configurableUsers = [ "xavier", "zayne", "rafayel", "sylus", "caleb", "valko" ];
+  const userEntries = Object.entries(usrids).filter(([userId]) => { 
+    return configurableUsers.includes(userId);
+  });
 
   const handleSubmit = (event) => {
     event.preventDefault();

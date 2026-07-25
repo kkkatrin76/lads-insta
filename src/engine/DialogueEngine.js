@@ -37,16 +37,9 @@ export function processEvents(state, events, customComment = null) {
     next.customComments.push(customComment);
   }
 
-  let skipFirstShowComment = hasCustomComment;
-
   for (const event of events) {
     switch (event.type) {
       case "SHOW_COMMENT":
-        if (skipFirstShowComment) {
-          skipFirstShowComment = false;
-          break;
-        }
-
         next.visibleComments.push(event.comment);
 
         const commentId = event.comment;
@@ -63,7 +56,13 @@ export function processEvents(state, events, customComment = null) {
 
       case "ADD_POST":
         if (event.post) {
-          next.addedPosts.push(event.post);
+          const postId =
+            event.post.id ?? `added-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+          next.addedPosts.push({
+            ...event.post,
+            id: postId,
+          });
         }
         break;
 
