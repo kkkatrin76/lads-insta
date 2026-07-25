@@ -260,7 +260,7 @@ export default function ScenePage() {
   };
 
   const handleHardReset = () => {
-    playToolbarSound("/sfx/lad_select.mp3");
+    playToolbarSound("./sfx/lad_select.mp3");
 
     if (typeof window === "undefined") {
       return;
@@ -279,7 +279,7 @@ export default function ScenePage() {
   };
 
   const handleRefreshScene = () => {
-    playToolbarSound("/sfx/lad_select.mp3");
+    playToolbarSound("./sfx/lad_select.mp3");
 
     if (typeof window === "undefined") {
       return;
@@ -334,7 +334,7 @@ export default function ScenePage() {
             </button>
             {/* Setting button to set account names */}
             <button type="button" className="scene-toolbar-button" onClick={() => {
-              playToolbarSound("/sfx/lad_select.mp3");
+              playToolbarSound("./sfx/lad_select.mp3");
               navigate("/settings");
             }} >
               <ManageAccountsOutlinedIcon />

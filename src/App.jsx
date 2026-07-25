@@ -4,6 +4,7 @@ import { HashRouter, Navigate, Routes, Route } from "react-router-dom";
 import ScenePage from "./pages/ScenePage";
 import PostPage from "./pages/PostPage";
 import SettingPage from "./pages/SettingPage";
+import { unlockAudio, playMessageTone } from "./utils/sounds";
 
 const DISCLAIMER_SESSION_KEY = "disclaimer-seen";
 
@@ -18,13 +19,7 @@ function NotificationHost() {
   });
 
   const playToastSound = () => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    const audio = new Audio("./sfx/lad_message_tone.mp3");
-    audio.volume = 0.7;
-    audio.play().catch(() => {});
+    playMessageTone();
   };
 
   useEffect(() => {
@@ -53,6 +48,29 @@ function NotificationHost() {
 
     return () => {
       window.removeEventListener("app:notify", handleNotify);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const unlockOnGesture = () => {
+      unlockAudio();
+      window.removeEventListener("pointerdown", unlockOnGesture);
+      window.removeEventListener("touchstart", unlockOnGesture);
+      window.removeEventListener("keydown", unlockOnGesture);
+    };
+
+    window.addEventListener("pointerdown", unlockOnGesture, { once: true });
+    window.addEventListener("touchstart", unlockOnGesture, { once: true });
+    window.addEventListener("keydown", unlockOnGesture, { once: true });
+
+    return () => {
+      window.removeEventListener("pointerdown", unlockOnGesture);
+      window.removeEventListener("touchstart", unlockOnGesture);
+      window.removeEventListener("keydown", unlockOnGesture);
     };
   }, []);
 
@@ -93,7 +111,7 @@ function NotificationHost() {
         ))}
       </div>
 
-      <div className="version">V1.0.6</div>
+      <div className="version">V1.0.7</div>
 
       <HashRouter>
         <Routes>

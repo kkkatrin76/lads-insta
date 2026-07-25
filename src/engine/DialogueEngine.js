@@ -1,12 +1,11 @@
 // Apply dialogue rules.
 
+import { playBubbleSound } from "../utils/sounds";
+
 function playIncomingCommentSound(commentId, commentData) {
   if (typeof window === "undefined") {
     return;
   }
-
-  const audio = new Audio("./sfx/lad_bubble_sound.mp3");
-  audio.volume = 0.6;
 
   const isFromUser = commentData?.user === "me";
   const isCustomComment = commentId?.startsWith("custom-");
@@ -15,7 +14,7 @@ function playIncomingCommentSound(commentId, commentData) {
     return;
   }
 
-  audio.play().catch(() => {});
+  playBubbleSound();
 }
 
 export function processEvents(state, events, customComment = null) {
