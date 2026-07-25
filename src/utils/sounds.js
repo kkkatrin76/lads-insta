@@ -1,9 +1,16 @@
+function getAssetUrl(path) {
+  const normalizedPath = path.startsWith('/') ? path.slice(1) : path;
+  const basePath = import.meta.env.BASE_URL || '/';
+
+  return `${basePath}${normalizedPath}`.replace(/([^:]\/)\//g, '$1');
+}
+
 export function playBackButtonSound() {
   if (typeof window === "undefined") {
     return;
   }
 
-  const audio = new Audio("/sfx/lad_back.mp3");
+  const audio = new Audio(getAssetUrl("./sfx/lad_back.mp3"));
   audio.volume = 0.6;
   audio.play().catch(() => {});
 }
@@ -13,7 +20,7 @@ export function playSelectSound() {
     return;
   }
 
-  const audio = new Audio("/sfx/lad_select.mp3");
+  const audio = new Audio(getAssetUrl("./sfx/lad_select.mp3"));
   audio.volume = 0.7;
   audio.play().catch(() => {});
 }

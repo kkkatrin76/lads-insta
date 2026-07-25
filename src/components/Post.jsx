@@ -22,8 +22,8 @@ export default function Post({ post, scene }) {
 
   const profileImage =
     typeof window === "undefined"
-      ? "/icons/you.png"
-      : window.localStorage.getItem("user-pfp") || "/icons/you.png";
+      ? "./icons/you.png"
+      : window.localStorage.getItem("user-pfp") || "./icons/you.png";
 
   const displayUserName = post.user === "me" ? profileName : getDisplayName(post.user, post.user);
   const displayUserImage = post.user === "me" ? profileImage : getDisplayImage(post.user);
@@ -71,8 +71,8 @@ export default function Post({ post, scene }) {
         {/* Right side: post content & comments */}
         <div className="post-right">
           <div className="post-header">{displayUserName}</div>
-          <p className="post-caption" style={{ margin: "10px 0 30px" }}>{post.caption}</p>
-          {post.image && <img className="post-image" src={`/posts/${post.image}`} alt="Post" />}
+          <p className="post-caption">{post.caption}</p>
+          {post.image && <img className="post-image" src={`./posts/${post.image}`} alt="Post" />}
 
           <div className="post-comments">
             <CommentList

@@ -58,5 +58,5 @@ export function getDisplayImage(userId) {
     return state.playerProfile?.image || initialState.playerProfile.image;
   }
 
-  return `/icons/${userId}.png`;
+  return `./icons/${userId}.png`;
 }

@@ -86,53 +86,53 @@ export default function SettingPage() {
 
   return (
     <div className="app-shell">
-      <main className="main-content feed">
-        <button type="button" className="post-back-button" onClick={() => {
-          playBackButtonSound();
-          navigate(-1);
-        }}><ArrowBackIosNewOutlinedIcon /></button>
+      <main className="main-content">
+        <div className="feed">
+          <button type="button" className="post-back-button" onClick={() => {
+            playBackButtonSound();
+            navigate(-1);
+          }}><ArrowBackIosNewOutlinedIcon /></button>
 
-        <p>Set everyone's display names.</p>
+          <p>Set everyone's display names.</p>
 
-        <form onSubmit={handleSubmit} className="settings-form">
-          <label className="settings-field">
-            <span>Your name</span>
-            <input
-              type="text"
-              value={profileName}
-              onChange={(event) => {
-                setProfileName(event.target.value);
-                setStatusMessage("");
-              }}
-              placeholder="Enter your username"
-            />
-          </label>
-
-          {userEntries.map(([userId, defaultName]) => (
-            <label key={userId} className="settings-field">
-              <span>{userId}</span>
+          <form onSubmit={handleSubmit} className="settings-form">
+            <label className="settings-field">
+              <span>Your name</span>
               <input
                 type="text"
-                value={customUsernames[userId] ?? ""}
+                value={profileName}
                 onChange={(event) => {
-                  setCustomUsernames((current) => ({
-                    ...current,
-                    [userId]: event.target.value,
-                  }));
+                  setProfileName(event.target.value);
                   setStatusMessage("");
                 }}
-                placeholder={`Enter username for ${defaultName}`}
+                placeholder="Enter your username"
               />
             </label>
-          ))}
 
-          <div className="settings-actions">
-            {statusMessage && <p className="settings-status" style={{ color: statusColor }}>{statusMessage}</p>}
-            <button type="submit" className="settings-submit-button"><SaveOutlinedIcon /></button>
-          </div>
+            {userEntries.map(([userId, defaultName]) => (
+              <label key={userId} className="settings-field">
+                <span>{userId}</span>
+                <input
+                  type="text"
+                  value={customUsernames[userId] ?? ""}
+                  onChange={(event) => {
+                    setCustomUsernames((current) => ({
+                      ...current,
+                      [userId]: event.target.value,
+                    }));
+                    setStatusMessage("");
+                  }}
+                  placeholder={`Enter username for ${defaultName}`}
+                />
+              </label>
+            ))}
 
-          
-        </form>
+            <div className="settings-actions">
+              {statusMessage && <p className="settings-status" style={{ color: statusColor }}>{statusMessage}</p>}
+              <button type="submit" className="settings-submit-button"><SaveOutlinedIcon /></button>
+            </div>
+          </form>
+        </div>
       </main>
     </div>
   );

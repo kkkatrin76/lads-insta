@@ -6,13 +6,13 @@ function getCurrentProfile() {
   if (typeof window === "undefined") {
     return {
       name: "You",
-      image: "/icons/you.png",
+      image: "./icons/you.png",
     };
   }
 
   return {
     name: window.localStorage.getItem("dashboard-name") || "You",
-    image: window.localStorage.getItem("user-pfp") || "/icons/you.png",
+    image: window.localStorage.getItem("user-pfp") || "./icons/you.png",
   };
 }
 

@@ -69,7 +69,7 @@ export default function ScenePage() {
     () => readSavedGameState().playerProfile?.name || "You",
   );
   const [profileImage, setProfileImage] = useState(
-    () => readSavedGameState().playerProfile?.image || "/icons/you.png",
+    () => readSavedGameState().playerProfile?.image || "./icons/you.png",
   );
   const [customUsernames, setCustomUsernames] = useState(
     () => readSavedGameState().customUsernames ?? {},

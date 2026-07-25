@@ -34,6 +34,10 @@ export default function PostPage() {
   }
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    }
+
     let isMounted = true;
 
     const loadPost = async () => {

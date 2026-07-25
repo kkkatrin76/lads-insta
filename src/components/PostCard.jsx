@@ -9,7 +9,7 @@ import { getDisplayImage, getDisplayName } from "../engine/userDisplay";
 
 export default function PostCard({ post, scene, profileName, profileImage, onLikeChange }) {
   const currentProfileName = profileName || "You";
-  const currentProfileImage = profileImage || "/icons/you.png";
+  const currentProfileImage = profileImage || "./icons/you.png";
   const [liked, setLiked] = useState(Boolean(post?.liked));
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function PostCard({ post, scene, profileName, profileImage, onLik
       return;
     }
 
-    const audio = new Audio("/sfx/lad_interact_with_him.mp3");
+    const audio = new Audio("./sfx/lad_interact_with_him.mp3");
     audio.volume = 0.7;
     audio.play().catch(() => {});
   };
@@ -55,7 +55,7 @@ export default function PostCard({ post, scene, profileName, profileImage, onLik
       <div className="post-right">
         <div className="post-header">{displayName}</div>
         <p className="post-caption">{post.caption}</p>
-        {post.image && <img className="post-image" src={`/posts/${post.image}`} alt="Post" />}
+        {post.image && <img className="post-image" src={`./posts/${post.image}`} alt="Post" />}
         <div className="post-footer">
           <Link
             to={`/post/${post.id}`}

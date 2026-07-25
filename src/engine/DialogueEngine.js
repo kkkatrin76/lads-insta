@@ -5,7 +5,7 @@ function playIncomingCommentSound(commentId, commentData) {
     return;
   }
 
-  const audio = new Audio("/sfx/lad_bubble_sound.mp3");
+  const audio = new Audio("./sfx/lad_bubble_sound.mp3");
   audio.volume = 0.6;
 
   const isFromUser = commentData?.user === "me";

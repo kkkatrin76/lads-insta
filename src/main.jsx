@@ -9,7 +9,7 @@ const isInteractiveElement = (element) => {
     return false;
   }
 
-  if (element.closest('.post-back-button')) {
+  if (element.closest('.post-back-button') || element.closest('.icon')) {
     return false;
   }
 

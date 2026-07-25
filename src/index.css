@@ -28,6 +28,16 @@ body {
   min-height: 100vh;
 }
 
+.version {
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  color: #56515c94;
+  font-family: 'Noto Sans', sans-serif;
+}
+
 input, button {
   font-family: 'Noto Sans', sans-serif;
   font-weight: 500;
@@ -73,13 +83,6 @@ input, button {
   align-items: center;
 }
 
-.scene-profile-row {
-  display: flex;
-  justify-content: flex-end;
-  max-width: 550px;
-  margin: 0 auto 12px;
-}
-
 .scene-toolbar {
   display: flex;
   gap: 10px;
@@ -103,14 +106,6 @@ input, button {
 .scene-toolbar-button:disabled, .settings-submit-button:disabled {
   color: #827d88;
   cursor: not-allowed;
-}
-
-.settings-page {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  max-width: 700px;
-  margin: 0 auto;
 }
 
 .settings-form {
@@ -155,38 +150,10 @@ input, button {
   flex: 1;
 }
 
-.scene-profile-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.75);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-}
-
 .scene-profile-image {
   width: 56px;
   height: 56px;
   cursor: pointer;
-}
-
-.scene-profile-name {
-  border: none;
-  background: transparent;
-  color: #702249;
-  font-family: 'Noto Serif', serif;
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-  padding: 0;
-}
-
-.welcome-row {
-  display: flex;
-  align-items: right;
-  gap: 8px;
-  flex-wrap: wrap;
 }
 
 .user-pfp {
@@ -231,14 +198,6 @@ input, button {
   padding: 80px 20px 60px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   background: #f0f0f099;
-}
-
-.post-card {
-  border-bottom: #cdcdcd 1px solid;
-  padding-bottom: 10px;
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
 }
 
 .post-right {
@@ -366,7 +325,6 @@ input, button {
   box-shadow: 0 0 8px rgb(131 131 131 / 50%);
 }
 
-
 .reply-options {
   display: flex;
   flex-direction: column;
@@ -456,8 +414,25 @@ input, button {
 }
 
 @media (max-width: 800px) {
+  body {
+    background-size: auto;
+    background-position: center;
+  }
+
+  input, .reply-input, .settings-field input {
+    font-size: 16px;
+  }
+
+  .version {
+    font-size: 0.6rem;
+  }
   .main-content {
-    padding: 16px;
+    padding: 40px 10px 60px;
+    font-size: 0.9rem;
+  }
+
+  .feed {
+    padding: 40px 10px 60px;
   }
 
   .my-toolbar {
@@ -469,49 +444,29 @@ input, button {
     width: 80px;
     height: 80px;
   }
+
   .post-pfp {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
   }
   .scene-toolbar {
     margin: 10px 0 20px 0;
-  }
-
-  .my-toolbar h1 {
-    font-size: 1.2rem;
   }
 
   .post-card {
     padding: 14px;
   }
 
-  .post-caption {
-    margin: 6px 0 15px;
+  .post-comments {
+    font-size: 0.9rem;
   }
-
-  /* .post-image {
-    height: 150px;
-    font-size: 2.5rem;
-  } */
 
   .post-header,
   .post-footer {
     gap: 15px;
   }
-}
 
-@media (max-width: 480px) {
-  .main-content {
-    padding: 12px;
+  .toggle-panel-content {
+    background: linear-gradient(to top, #5354559e, #d8d8d8ae);
   }
-
-  .story-avatar {
-    width: 56px;
-    height: 56px;
-    font-size: 1.3rem;
-  }
-
-  /* .post-image {
-    height: 130px;
-  } */
 }

@@ -2,11 +2,25 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/x-icon" href="/icon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Instagram Dashboard Mockup</title>
+    <title>❤️&🪐 Insta</title>
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      const repoBase = '/lads-insta';
+      const pathname = window.location.pathname || '/';
+      const hash = window.location.hash || '';
+      const isRoot = pathname === '/' || pathname === repoBase || pathname === `${repoBase}/`;
+      const hasHashRoute = hash.startsWith('#/');
+
+      if (!hasHashRoute && !isRoot) {
+        const relativePath = pathname.replace(new RegExp(`^${repoBase}/?`), '');
+        const nextPath = relativePath ? `/#/${relativePath}` : '/';
+        window.location.replace(`${window.location.origin}${repoBase}${nextPath}${window.location.search}`);
+      }
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
