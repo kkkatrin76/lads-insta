@@ -4,6 +4,7 @@ export const posts = {
     user: "valko",
     image: 'v01.jpeg',
     caption: "New record today! >:3",
+    replyDelayMs: 2000,
     initialState: {
       visibleComments: ["c1"],
       currentStep: "reply1"
@@ -147,7 +148,6 @@ export const posts = {
                 type: "SHOW_COMMENT",
                 comment: "c7"
               },
-
               {
                 type: "SET_STEP",
                 step: "end"
@@ -157,7 +157,7 @@ export const posts = {
 
           {
             id: "reply2choice2",
-            text: "i'm comming rn where r u?",
+            text: "coming over. where are you?",
 
             events: [
               {
@@ -167,11 +167,31 @@ export const posts = {
               {
                 type: "ADD_POST",
                 post: {
-                  id: "post-added-from-scene1",
-                  user: "me",
-                  caption: "guess who just got benched by valko >:3",
-                  image: "",
+                  id: "post1-reply2choice2-1",
+                  user: "valko",
+                  caption: ">:3",
+                  image: "v02.jpeg",
+                  initialState: {
+                    visibleComments: ["c1"],
+                    currentStep: ""
+                  },
+
+                  comments: {
+                    c1: {
+                      id: "c1",
+                      user: "me",
+                      text: "🙈",
+
+                      children: [],
+
+                      choices: [],
+                    },
+                  }
                 }
+              },
+              {
+                type: "SHOW_NOTIFICATION",
+                text: "New post added to the main feed!"
               },
               {
                 type: "SET_STEP",

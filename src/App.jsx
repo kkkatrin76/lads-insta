@@ -300,20 +300,85 @@
 // export default App;
 
 
+import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // import FeedPage from "./pages/FeedPage";
 import ScenePage from "./pages/ScenePage";
 import PostPage from "./pages/PostPage";
+import SettingPage from "./pages/SettingPage";
+
+function NotificationHost() {
+  const [notifications, setNotifications] = useState([]);
+
+  const playToastSound = () => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const audio = new Audio("/sfx/lad_message_tone.mp3");
+    audio.volume = 0.7;
+    audio.play().catch(() => {});
+  };
+
+  useEffect(() => {
+    const handleNotify = (event) => {
+      const notification = event.detail;
+
+      if (!notification?.text) {
+        return;
+      }
+
+      setNotifications((current) => {
+        if (current.some((item) => item.id === notification.id)) {
+          return current;
+        }
+
+        playToastSound();
+        return [...current, notification];
+      });
+
+      window.setTimeout(() => {
+        setNotifications((current) => current.filter((item) => item.id !== notification.id));
+      }, 5000);
+    };
+
+    window.addEventListener("app:notify", handleNotify);
+
+    return () => {
+      window.removeEventListener("app:notify", handleNotify);
+    };
+  }, []);
+
+  const dismissNotification = (notificationId) => {
+    setNotifications((current) => current.filter((item) => item.id !== notificationId));
+  };
+
+  return (
+    <>
+      <div className="notification-stack">
+        {notifications.map((notification) => (
+          <div key={notification.id} className="notification-toast">
+            <span>{notification.text}</span>
+            <button type="button" className="notification-close" onClick={() => dismissNotification(notification.id)} aria-label="Close notification">
+              ×
+            </button>
+          </div>
+        ))}
+      </div>
+
+      <BrowserRouter>
+        <Routes>
+          {/* <Route path="/" element={<FeedPage />} /> */}
+          <Route path="/r/:scene" element={<ScenePage />} />
+          <Route path="/post/:postId" element={<PostPage />} />
+          <Route path="/settings" element={<SettingPage />} />
+        </Routes>
+      </BrowserRouter>
+    </>
+  );
+}
 
 export default function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        {/* <Route path="/" element={<FeedPage />} /> */}
-        <Route path="/r/:scene" element={<ScenePage />} />
-        <Route path="/post/:postId" element={<PostPage />} />
-      </Routes>
-    </BrowserRouter>
-  );
+  return <NotificationHost />;
 }

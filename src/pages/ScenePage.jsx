@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { scenes } from "../data/scenes";
+import { usrids } from "../data/users";
 import { initialState } from "../engine/GameState";
 import PostCard from "../components/PostCard";
 
@@ -8,6 +9,23 @@ import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 
 const sceneModules = import.meta.glob("../data/posts/*.js");
+
+function mergeScenePosts(basePosts, savedScenePosts) {
+  const savedPosts = Array.isArray(savedScenePosts) ? savedScenePosts : [];
+  const savedById = new Map(savedPosts.map((post) => [post.id, post]));
+
+  const mergedBasePosts = basePosts.map((post) => {
+    const savedPost = savedById.get(post.id);
+
+    return savedPost ? { ...post, ...savedPost } : post;
+  });
+
+  const extraSavedPosts = savedPosts.filter(
+    (savedPost) => !basePosts.some((basePost) => basePost.id === savedPost.id),
+  );
+
+  return [...extraSavedPosts, ...mergedBasePosts];
+}
 
 function readSavedGameState() {
   if (typeof window === "undefined") {
@@ -30,6 +48,10 @@ function readSavedGameState() {
         ...initialState.playerProfile,
         ...(parsedState.playerProfile ?? {}),
       },
+      customUsernames: {
+        ...(initialState.customUsernames ?? {}),
+        ...(parsedState.customUsernames ?? {}),
+      },
     };
   } catch {
     return initialState;
@@ -38,6 +60,7 @@ function readSavedGameState() {
 
 export default function ScenePage() {
   const { scene } = useParams();
+  const navigate = useNavigate();
   const data = scenes[scene];
   const fileInputRef = useRef(null);
   const [scenePosts, setScenePosts] = useState([]);
@@ -47,6 +70,9 @@ export default function ScenePage() {
   );
   const [profileImage, setProfileImage] = useState(
     () => readSavedGameState().playerProfile?.image || "/icons/you.png",
+  );
+  const [customUsernames, setCustomUsernames] = useState(
+    () => readSavedGameState().customUsernames ?? {},
   );
 
   useEffect(() => {
@@ -66,11 +92,11 @@ export default function ScenePage() {
 
       const sceneModule = await moduleLoader();
       const basePosts = Object.values(sceneModule.posts ?? {});
-      const addedScenePosts = Array.isArray(gameState.scenePosts?.[scene])
+      const savedScenePosts = Array.isArray(gameState.scenePosts?.[scene])
         ? gameState.scenePosts[scene]
         : [];
 
-      setScenePosts([...addedScenePosts, ...basePosts]);
+      setScenePosts(mergeScenePosts(basePosts, savedScenePosts));
     };
 
     loadScenePosts();
@@ -81,19 +107,22 @@ export default function ScenePage() {
       return;
     }
 
-    const nextGameState = {
-      ...gameState,
-      playerProfile: {
-        name: profileName,
-        image: profileImage,
-      },
-    };
+    setGameState((prevState) => {
+      const nextGameState = {
+        ...prevState,
+        playerProfile: {
+          name: profileName,
+          image: profileImage,
+        },
+        customUsernames,
+      };
 
-    setGameState(nextGameState);
-    window.localStorage.setItem("game-state", JSON.stringify(nextGameState));
-    window.localStorage.setItem("dashboard-name", profileName);
-    window.localStorage.setItem("user-pfp", profileImage);
-  }, [profileName, profileImage]);
+      window.localStorage.setItem("game-state", JSON.stringify(nextGameState));
+      window.localStorage.setItem("dashboard-name", profileName);
+      window.localStorage.setItem("user-pfp", profileImage);
+      return nextGameState;
+    });
+  }, [profileName, profileImage, customUsernames]);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -171,12 +200,60 @@ export default function ScenePage() {
     reader.readAsDataURL(file);
   };
 
-  const handleRefreshScene = () => {
+  const handleLikeChange = (postId, liked) => {
     if (typeof window === "undefined") {
       return;
     }
 
-    const shouldRefresh = window.confirm("This will reset this feed back to its original posts. Are you sure you want to do this?");
+    const savedGameState = window.localStorage.getItem("game-state");
+    if (!savedGameState) {
+      return;
+    }
+
+    const parsedGameState = JSON.parse(savedGameState);
+    const currentScenePosts = Array.isArray(scenePosts) ? scenePosts : [];
+
+    const nextScenePosts = currentScenePosts.map((candidatePost) => {
+      if (candidatePost.id !== postId) {
+        return candidatePost;
+      }
+
+      return {
+        ...candidatePost,
+        liked,
+      };
+    });
+
+    const nextGameState = {
+      ...parsedGameState,
+      scenePosts: {
+        ...(parsedGameState.scenePosts ?? {}),
+        [scene]: nextScenePosts,
+      },
+    };
+
+    window.localStorage.setItem("game-state", JSON.stringify(nextGameState));
+    setGameState(nextGameState);
+  };
+
+  const playToolbarSound = (soundPath) => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const audio = new Audio(soundPath);
+    audio.volume = 0.7;
+    audio.play().catch(() => {});
+  };
+
+  const handleRefreshScene = () => {
+    playToolbarSound("/sfx/lad_select.mp3");
+
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const shouldRefresh = window.confirm("This will reset this page back to its original posts. Are you sure you want to do this?");
 
     if (!shouldRefresh) {
       return;
@@ -201,13 +278,6 @@ export default function ScenePage() {
     setGameState(nextGameState);
   };
 
-  // TODO: Implement a feature to customize the usernames of the boys
-  const handleCustomizeUsernames = () => {
-    if (typeof window === "undefined") {
-      return;
-    }
-  };
-
   if (!data) {
     return null;
   }
@@ -215,45 +285,30 @@ export default function ScenePage() {
   return (
     <div className="app-shell">
       <main className="main-content">
-        {/* Profile image & name */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          hidden
-          onChange={handleProfileImageChange}
-        />
 
-        <div className="topbar">
-          <span className="name-button" onClick={handleNameClick}>
-            {profileName}
-          </span>
-          <img
-            className="user-pfp scene-profile-image"
-            src={profileImage}
-            alt="your profile"
-            onClick={handleProfileImageClick}
-          />
-        </div>
+        <div className="top">
+          <div className="scene-toolbar">
+            {/* Refresh button to reset the scene posts to the original state */}
+            <button type="button" className="scene-toolbar-button" onClick={handleRefreshScene} >
+              <RefreshOutlinedIcon />
+            </button>
+            <button type="button" className="scene-toolbar-button" onClick={() => {
+              playToolbarSound("/sfx/lad_select.mp3");
+              navigate("/settings");
+            }} >
+              <ManageAccountsOutlinedIcon />
+            </button>
+          </div>
 
-        {/* Refresh button to reset the scene posts to the original state */}
-        <div className="scene-toolbar">
-          {/* Refresh button to reset the scene posts to the original state */}
-          <button
-            type="button"
-            className="scene-refresh-button"
-            onClick={handleRefreshScene}
-          >
-            <RefreshOutlinedIcon />
-          </button>
-          {/* TODO: Customize button to customize your boys' usernames */}
-          <button
-            type="button"
-            className="scene-refresh-button"
-            onClick={handleCustomizeUsernames}
-          >
-            <ManageAccountsOutlinedIcon />
-          </button>
+          {/* Profile image & name */}
+          <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={handleProfileImageChange}/>
+          
+          <div className="my-toolbar">
+            <span className="name-button" onClick={handleNameClick}>
+              {profileName}
+            </span>
+            <img className="user-pfp scene-profile-image" src={profileImage} alt="Your pfp" onClick={handleProfileImageClick}/>
+          </div>
         </div>
 
         <div className="feed">
@@ -264,9 +319,11 @@ export default function ScenePage() {
               scene={scene}
               profileName={profileName}
               profileImage={profileImage}
+              onLikeChange={handleLikeChange}
             />
           ))}
         </div>
+
       </main>
     </div>
   );

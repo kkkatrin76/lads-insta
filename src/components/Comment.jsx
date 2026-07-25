@@ -1,5 +1,7 @@
 // Display one comment recursively.
 
+import { getDisplayName } from "../engine/userDisplay";
+
 function getCurrentProfile() {
   if (typeof window === "undefined") {
     return {
@@ -15,48 +17,45 @@ function getCurrentProfile() {
 }
 
 export function CommentList({ comments, visibleComments = [], selectedChoices = {}, onChoose }) {
-  return Object.entries(comments ?? {}).map(([commentId, comment]) => {
-    if (!visibleComments.includes(commentId)) {
-      return null;
-    }
+  return visibleComments
+    .filter((commentId) => Boolean(comments?.[commentId]))
+    .map((commentId) => {
+      const comment = comments[commentId];
+      const profile = getCurrentProfile();
+      const isCurrentUser = comment.user === "me";
+      const displayName = isCurrentUser ? profile.name : getDisplayName(comment.user, comment.user || "Unknown");
+      // const displayImage = isCurrentUser ? profile.image : `/icons/${comment.user}.png`;
 
-    const profile = getCurrentProfile();
-    const isCurrentUser = comment.user === "me";
-    const displayName = isCurrentUser ? profile.name : (comment.user || "Unknown");
-    // const displayImage = isCurrentUser ? profile.image : `/icons/${comment.user}.png`;
+      return (
+        <div key={commentId}>
+          <div>
+            <span className="username">{displayName}</span>: <span>{comment.text}</span>
+          </div>
 
-    return (
-      <div key={commentId}>
-        <div>
-          <span className="username">{displayName}</span>: <span>{comment.text}</span>
-        </div>
+          {!selectedChoices[commentId] &&
+            comment.choices?.map((choice) => (
+              <button
+                key={choice.id}
+                onClick={() => onChoose?.(commentId, choice)}
+              >
+                {choice.text}
+              </button>
+            ))}
 
-        
-
-        {!selectedChoices[commentId] &&
-          comment.choices?.map((choice) => (
-            <button
-              key={choice.id}
-              onClick={() => onChoose?.(commentId, choice)}
-            >
-              {choice.text}
-            </button>
+          {comment.children?.map((childId) => (
+            <Comment
+              key={childId}
+              commentId={childId}
+              comments={comments}
+              visibleComments={visibleComments}
+              selectedChoices={selectedChoices}
+              onChoose={onChoose}
+              depth={1}
+            />
           ))}
-
-        {comment.children?.map((childId) => (
-          <Comment
-            key={childId}
-            commentId={childId}
-            comments={comments}
-            visibleComments={visibleComments}
-            selectedChoices={selectedChoices}
-            onChoose={onChoose}
-            depth={1}
-          />
-        ))}
-      </div>
-    );
-  });
+        </div>
+      );
+    });
 }
 
 export default function Comment({
@@ -72,7 +71,7 @@ export default function Comment({
   const comment = comments[commentId];
   const profile = getCurrentProfile();
   const isCurrentUser = comment.user === "me";
-  const displayName = isCurrentUser ? profile.name : (comment.user || "Unknown");
+  const displayName = isCurrentUser ? profile.name : getDisplayName(comment.user, comment.user || "Unknown");
   // const displayImage = isCurrentUser ? profile.image : null;
 
   return (
@@ -85,15 +84,7 @@ export default function Comment({
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        {/* {displayImage && (
-          <img
-            className="post-pfp"
-            src={displayImage}
-            alt={displayName}
-            style={{ width: 32, height: 32 }}
-          />
-        )} */}
-        <strong>{displayName}</strong>
+        <p className="username">{displayName}</p>
       </div>
 
       <div>{comment.text}</div>

@@ -22,5 +22,7 @@ export const initialState = {
   playerProfile: {
     name: "You",
     image: "/icons/you.png"
-  }
+  },
+
+  customUsernames: {}
 };
