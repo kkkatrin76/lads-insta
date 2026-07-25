@@ -5,8 +5,17 @@ import ScenePage from "./pages/ScenePage";
 import PostPage from "./pages/PostPage";
 import SettingPage from "./pages/SettingPage";
 
+const DISCLAIMER_SESSION_KEY = "disclaimer-seen";
+
 function NotificationHost() {
   const [notifications, setNotifications] = useState([]);
+  const [showDisclaimer, setShowDisclaimer] = useState(() => {
+    if (typeof window === "undefined") {
+      return false;
+    }
+
+    return window.sessionStorage.getItem(DISCLAIMER_SESSION_KEY) !== "true";
+  });
 
   const playToastSound = () => {
     if (typeof window === "undefined") {
@@ -51,8 +60,28 @@ function NotificationHost() {
     setNotifications((current) => current.filter((item) => item.id !== notificationId));
   };
 
+  const dismissDisclaimer = () => {
+    if (typeof window !== "undefined") {
+      window.sessionStorage.setItem(DISCLAIMER_SESSION_KEY, "true");
+    }
+
+    setShowDisclaimer(false);
+  };
+
   return (
     <>
+      {showDisclaimer && (
+        <div className="disclaimer-overlay" role="presentation">
+          <div className="disclaimer-modal" role="dialog" aria-modal="true" aria-labelledby="disclaimer-title">
+            <h1 id="disclaimer-title" className="disclaimer-title">⚠️ DISCLAIMER ⚠️</h1>
+            <p className="disclaimer-body">This is purely a fan project that has no affiliations with Infold, Papergames or any related parties. Please do not disseminate, repost, link, or share outside your friends group without my permission, especially with the knowledge of the current situation following Valko's cancellation.</p>
+            <button type="button" className="disclaimer-button" onClick={dismissDisclaimer}>
+              I understand
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="notification-stack">
         {notifications.map((notification) => (
           <div key={notification.id} className="notification-toast">

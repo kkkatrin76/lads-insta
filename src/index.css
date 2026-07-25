@@ -38,6 +38,49 @@ body {
   font-family: "Noto Sans", sans-serif;
 }
 
+.disclaimer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgb(17 24 39 / 72%);
+  backdrop-filter: blur(8px);
+}
+
+.disclaimer-modal {
+  width: min(420px, 100%);
+  padding: 28px 24px 22px;
+  border: 1px solid rgb(255 255 255 / 22%);
+  background: linear-gradient(180deg, #ffffffc4, #cecece9c);
+  box-shadow: 0 24px 60px rgb(0 0 0 / 32%);
+  text-align: center;
+  color: #343334;
+}
+
+.disclaimer-title {
+  margin: 0 0 12px;
+  font-family: "Noto Serif", serif;
+  font-size: 2rem;
+}
+
+.disclaimer-body {
+  font-family: "Noto Serif", serif;
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+
+.disclaimer-button {
+  font-family: "Noto Serif", serif;
+  border: 1px solid #efd1c1;
+  padding: 10px 18px;
+  background: linear-gradient(to bottom right, #eaded3 30%, #e6d4c3 10%);
+  color: #6a4d4d;
+  cursor: pointer;
+  font-weight: 700;
+}
+
 input, button {
   font-family: "Noto Sans", sans-serif;
   font-weight: 500;

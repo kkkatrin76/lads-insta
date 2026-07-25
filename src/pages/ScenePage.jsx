@@ -266,7 +266,7 @@ export default function ScenePage() {
       return;
     }
 
-    const shouldReset = window.confirm("⚠️ WARNING: This will clear your browser's local storage, username settings, and posts. Are you sure you want to do this?");
+    const shouldReset = window.confirm("⚠️ WARNING: This will clear your browser's local & session storage, username settings, and posts. Are you sure you want to do this?");
 
     if (!shouldReset) {
       return;
@@ -274,6 +274,7 @@ export default function ScenePage() {
 
     refreshScene();
     window.localStorage.clear();
+    window.sessionStorage.clear();
     window.location.reload();
   };
 
