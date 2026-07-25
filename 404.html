@@ -7,8 +7,10 @@
   </head>
   <body>
     <script>
-      sessionStorage.setItem('gh-pages-redirect', window.location.pathname + window.location.search + window.location.hash);
-      window.location.replace('./');
+      const pathname = window.location.pathname || '/';
+      const relativePath = pathname.split('/').slice(2).join('/');
+      const hashPath = relativePath ? `/${relativePath}` : '/';
+      window.location.replace(`./#${hashPath}`);
     </script>
   </body>
 </html>
